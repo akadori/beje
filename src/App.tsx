@@ -8,7 +8,8 @@ function App() {
     start: Point;
     end: Point;
   };
-  const canvas = useRef<HTMLCanvasElement>(null);
+  const canvasLine = useRef<HTMLCanvasElement>(null);
+  const canvasPoint = useRef<HTMLCanvasElement>(null);
   const [points, setPoints] = useState<Point[]>([]);
   const [dimensions, setDimensions] = useState({
     height: window.innerHeight,
@@ -58,15 +59,9 @@ function App() {
     return result;
   };
 
-  const draw = (points: Point[], lines: Line[], canvas: HTMLCanvasElement) => {
+  const drawLine = (lines: Line[], canvas: HTMLCanvasElement) => {
     const ctx = canvas.getContext("2d")!;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "green";
-    points.forEach((p) => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 5, 0, 360);
-      ctx.stroke();
-    });
     lines.forEach((l) => {
       ctx.beginPath();
       ctx.moveTo(l.start.x, l.start.y);
@@ -75,13 +70,24 @@ function App() {
     });
   };
 
+  const drawPoints = (points: Point[], canvas: HTMLCanvasElement) => {
+    const ctx = canvas.getContext("2d")!;
+    ctx.fillStyle = "green";
+    points.forEach((p) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 1, 0, 360);
+      ctx.stroke();
+    });
+  };
+
   useEffect(() => {
-    if (canvas.current) {
+    if (canvasLine.current && canvasPoint.current) {
       const { points: pointsToDraw, lines } = pointsAndLines(
         points,
         timeLeft / INITIAL
       );
-      draw(pointsToDraw, lines, canvas.current);
+      drawLine(lines, canvasLine.current);
+      drawPoints(pointsToDraw, canvasPoint.current);
     }
   }, [points, timeLeft]);
 
@@ -98,7 +104,7 @@ function App() {
 
   const onClickHandle = (e: React.MouseEvent<HTMLCanvasElement>) => {
     e.preventDefault();
-    if (canvas.current) {
+    if (canvasPoint.current) {
       setPoints((prevPoints) => [
         ...prevPoints,
         { x: e.clientX, y: e.clientY },
@@ -111,8 +117,13 @@ function App() {
       <p>timeleft: {timeLeft}</p>
       <canvas
         {...dimensions}
-        style={{ borderColor: "red", position: "absolute", top: 0, left: 0 }}
-        ref={canvas}
+        style={{ position: "absolute", top: 0, left: 0 }}
+        ref={canvasLine}
+      ></canvas>
+      <canvas
+        {...dimensions}
+        style={{ position: "absolute", top: 0, left: 0 }}
+        ref={canvasPoint}
         onClick={onClickHandle}
       ></canvas>
     </div>
