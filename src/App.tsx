@@ -33,6 +33,11 @@ function App() {
     }, []);
   };
 
+  useEffect(() => {
+    const ctx = canvasPoint.current!.getContext("2d")!;
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+  }, [points]);
+
   const pointsOnLines = (lines: Line[], t: number) => {
     return lines.map((l) => {
       const { start, end } = l;
@@ -51,7 +56,8 @@ function App() {
     };
     let targetPoints = clickedPoints;
     for (let index = 0; index < len; index++) {
-      result.points.push(...targetPoints);
+      // result.points.push(...targetPoints);
+      result.points = targetPoints;
       const lines = connectPoints(targetPoints);
       result.lines.push(...lines);
       targetPoints = pointsOnLines(lines, t);
