@@ -121,6 +121,7 @@ function App() {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
       <p>timeleft: {timeLeft}</p>
+      <p>Click to draw a Bezier curve.</p>
       <canvas
         {...dimensions}
         style={{ position: "absolute", top: 0, left: 0 }}
